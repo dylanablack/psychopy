@@ -1,51 +1,59 @@
-from __future__ import division, print_function
-import os
-import sys
-import numpy as np
-from psychopy import visual, logging
-import psychopy
+from psychopy import visual, core, event
+
+# Define the background
+win=visual.Window([800,600],monitor="testMonitor",units="deg",fullscr=True)
+
+# Number of epochs (repetitions)
+EPOCH=15
+
+# Duration of expansion
+EXPANSION_MS=250
+
+# Hold duration
+HOLD_TIME_MS=250
+
+# ISI duration
+ISI_MS=500
+
+# Start radius 
+
+START_RADIUS=1
+
+# Time-to-frame conversion assuming a 60Hz FR and RR
+FRAMES=int((60*EXPANSION_MS)/1000)
+HOLD_FRAMES=int((60*HOLD_TIME_MS)/1000)
+ISI_FRAMES=int((60*ISI_MS)/1000)
+print(FRAMES)
+
+# Define the stimulus
+circle=visual.Circle(win,radius=START_RADIUS,edges=1000,fillColor='black',lineColor='black')
+
+while EPOCH > 0:
+#for e in range(EPOCH):
+    for f in range(FRAMES):
+        if circle.radius<10:
+            circle.radius=(circle.radius+(9/FRAMES))
+            circle.draw()
+            win.flip()
+    for f in range(HOLD_FRAMES):
+        circle.radius=10
+        circle.draw()
+        win.flip()
+    for f in range(ISI_FRAMES):
+        win.flip()
+    print(circle.radius)
+    circle.radius=1
+    EPOCH -= 1
+
+# Get keys to quit.
+if len(event.getKeys())>0:
+    event.clearEvents()
+    win.close()
 
 
 
-NUM_FRAMES = 15
-NUM_TRIALS = 15
-HOLD_FRAMES = 15
-ISI_FRAMES = 30
 
-# Most arguments are just defaults made explicit in case they are relevant in future.
 
-win=psychopy.visual.Window(size=(800, 600),
-     pos=None,
-     color=(0, 0, 0),
-     colorSpace='rgb',
-     rgb=None,
-     dkl=None,
-     lms=None,
-     fullscr=None, 
-     allowGUI=None,
-     monitor=None,
-     bitsMode=None,
-     winType=None,
-     units=None,
-     gamma=None,
-     blendMode='avg',
-     screen=1,
-     viewScale=None,
-     viewPos=None,
-     viewOri=0.0,
-     waitBlanking=True,
-     allowStencil=False,
-     multiSample=False,
-     numSamples=2,
-     stereo=False,
-     name='window1',
-     checkTiming=True,
-     useFBO=False,
-     useRetina=True,
-     autoLog=True,
-     #*args,
-     #**kwargs
-)
 '''
 # For recording dropped frames
 
@@ -65,55 +73,3 @@ logging.console.setLevel(logging.WARNING)
 
 print('Overall, %i frames were dropped.' % win.nDroppedFrames)
 '''
-
-circle=psychopy.visual.Circle(win=win,
-    units='deg', # units in degress of visual angle - parameters set in Monitor Settings.
-    lineWidth=1.5,
-    lineColor='black',
-    lineColorSpace='rgb',
-    fillColor='black',
-    fillColorSpace='rgb',
-    vertices=((-0.5, 0), (0, 0.5), (0.5, 0)),
-    #windingRule=None,
-    closeShape=True,
-    pos=(0, 0),
-    size=2,
-    ori=0.0,
-    opacity=1.0,
-    contrast=1.0,
-    depth=0,
-    interpolate=True,
-    name=None,
-    autoLog=None,
-    autoDraw=False
-)
-
-# loop through NUM_TRIALS then loop through frames of NUM_FRAMES for stimulus
-#
-
-while NUM_TRIALS > 0:
-    for frames in range(NUM_FRAMES):
-        circle.draw()
-        win.flip()
-        for frames in ISI_FRAMES:
-            win.flip()
-        circle.size += 1
-        NUM_TRIALS -= 1
-
-
-while NUM_TRIALS > 0 and circle.size <= 20:
-    for f in NUM_TRIALS:
-        circle.draw()
-        win.flip()
-        circle.size+=1
-
-
-
-
-
-
-
-
-
-
-
